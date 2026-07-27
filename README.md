@@ -18,21 +18,21 @@ A premium, accessible Tic-Tac-Toe built with React, Vite, and Tailwind CSS. Two 
 
 ## Screenshots
 
-| Empty board (light) | Mid-game (dark) | Winning line |
-| --- | --- | --- |
+| Empty board (light)                                                               | Mid-game (dark)                                                          | Winning line                                                                             |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
 | ![Empty tic-tac-toe board in light theme](docs/screenshots/board-empty-light.png) | ![Mid-game board in dark theme](docs/screenshots/board-midgame-dark.png) | ![Animated winning line marking three cells in a row](docs/screenshots/winning-line.png) |
 
 ## Tech stack
 
-| Layer      | Choice                                          |
-| ---------- | ------------------------------------------------ |
-| Framework  | [React 19](https://react.dev)                    |
-| Build tool | [Vite](https://vite.dev)                          |
-| Styling    | [Tailwind CSS v4](https://tailwindcss.com) (via `@tailwindcss/vite`, no separate PostCSS config needed) |
-| Icons      | [lucide-react](https://lucide.dev)                |
-| Linting    | ESLint 10, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh` |
-| Persistence | Browser `localStorage` (theme, sound, player names, scores, in-progress moves) |
-| Audio      | Native Web Audio API (no audio assets)            |
+| Layer       | Choice                                                                                                  |
+| ----------- | ------------------------------------------------------------------------------------------------------- |
+| Framework   | [React 19](https://react.dev)                                                                           |
+| Build tool  | [Vite](https://vite.dev)                                                                                |
+| Styling     | [Tailwind CSS v4](https://tailwindcss.com) (via `@tailwindcss/vite`, no separate PostCSS config needed) |
+| Icons       | [lucide-react](https://lucide.dev)                                                                      |
+| Linting     | ESLint 10, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`                                   |
+| Persistence | Browser `localStorage` (theme, sound, player names, scores, in-progress moves)                          |
+| Audio       | Native Web Audio API (no audio assets)                                                                  |
 
 No backend, no database, no build-time API keys — it's a static site that can be hosted anywhere that serves static files.
 
@@ -78,7 +78,7 @@ tic-tac-toe/
 Requires **Node.js 20 or later** (Vite 8's minimum) and npm.
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/alimirzaeimajd/tic-tac-toe.git
 cd tic-tac-toe
 npm install
 ```
@@ -113,16 +113,16 @@ Runs ESLint across the project (JS/JSX, React Hooks correctness, React Refresh r
 
 ## Scripts
 
-| Script            | What it does                                  |
-| ----------------- | ---------------------------------------------- |
-| `npm run dev`      | Start the Vite dev server with hot reload      |
-| `npm run build`    | Production build to `dist/`                    |
-| `npm run preview`  | Serve the production build locally             |
-| `npm run lint`     | Run ESLint                                     |
+| Script            | What it does                              |
+| ----------------- | ----------------------------------------- |
+| `npm run dev`     | Start the Vite dev server with hot reload |
+| `npm run build`   | Production build to `dist/`               |
+| `npm run preview` | Serve the production build locally        |
+| `npm run lint`    | Run ESLint                                |
 
 ## Project architecture
 
-The game is modeled around **one source of truth**: an ordered array of moves (`{ index, symbol, moveNumber }`), owned by the `useTicTacToe` hook. Everything else — the board, whose turn it is, the winner, whether it's a draw, and the move-history list — is *derived* from that array with `useMemo`, rather than tracked as separate, independently-updated state.
+The game is modeled around **one source of truth**: an ordered array of moves (`{ index, symbol, moveNumber }`), owned by the `useTicTacToe` hook. Everything else — the board, whose turn it is, the winner, whether it's a draw, and the move-history list — is _derived_ from that array with `useMemo`, rather than tracked as separate, independently-updated state.
 
 This matters because the previous version of this project had a class of bugs that came from state living in more than one place (a player's display name lived only inside the `Player` component and never reached the component that actually decided who won; the board stayed clickable after the game ended because nothing centrally tracked "is this game over"). Deriving everything from one array makes those states impossible to get out of sync, and makes undo a one-line operation (`moves.slice(0, -1)`) instead of a separate, error-prone code path.
 
@@ -144,9 +144,9 @@ To change the palette, edit the variables in `:root` (light theme) and `.dark` (
   --background: #fafafa;
   --foreground: #18181b;
   --primary: #4f46e5;
-  --x: #4f46e5;        /* X symbol color */
-  --o: #0d9488;        /* O symbol color */
-  --success: #16a34a;  /* winning-line color context */
+  --x: #4f46e5; /* X symbol color */
+  --o: #0d9488; /* O symbol color */
+  --success: #16a34a; /* winning-line color context */
   /* …and so on */
 }
 ```
