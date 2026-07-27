@@ -18,7 +18,9 @@ A premium, accessible Tic-Tac-Toe built with React, Vite, and Tailwind CSS. Two 
 
 ## Screenshots
 
-_Add screenshots or a short GIF of gameplay here. Suggested shots: empty board (light), mid-game (dark), and the win-line animation._
+| Empty board (light) | Mid-game (dark) | Winning line |
+| --- | --- | --- |
+| ![Empty tic-tac-toe board in light theme](docs/screenshots/board-empty-light.png) | ![Mid-game board in dark theme](docs/screenshots/board-midgame-dark.png) | ![Animated winning line marking three cells in a row](docs/screenshots/winning-line.png) |
 
 ## Tech stack
 
