@@ -1,79 +1,24 @@
-import "./App.css";
-import Player from "./Components/Player";
-import GameBoard from "./Components/GameBoard";
-import { useState } from "react";
-import ShowLog from "./Components/showLog";
-import GameOver from "./Components/GameOver";
-import { WINNING_COMBINATIONS as winSituation } from "./winning-combinations";
+import { ThemeToggle } from "./components/ThemeToggle";
+import { GameEngine } from "./components/game/GameEngine";
 
-const PLAYERS = {
-  X: "Player 1",
-  O: "Player 2",
-};
-
-const INITIAL_GAME_BOARD = [
-  [null, null, null],
-  [null, null, null],
-  [null, null, null],
-];
-
-function getWinner(b, p) {
-  let winner;
-
-  for (const c of winSituation) {
-    const first = b[c[0].row][c[0].column];
-    const second = b[c[1].row][c[1].column];
-    const third = b[c[2].row][c[2].column];
-
-    if (first && first === second && second === third) {
-      winner = p[first];
-    }
-  }
-
-  return winner;
-}
-
-function App() {
-  const [gameLogs, setGameLogs] = useState([]);
-
-  const [gameBoard, setGameBoard] = useState(INITIAL_GAME_BOARD);
-
-  const [currentPlayer, setCurrentPlayer] = useState("X");
-
-  function handleButtonClick(row, col) {
-    if (gameBoard[row][col]) return; // square already filled
-    const next = gameBoard.map((row) => [...row]); // don't mutate state directly
-    next[row][col] = currentPlayer;
-    setGameBoard(next);
-
-    setGameLogs([
-      {
-        squareInfo: { row, col },
-        player: currentPlayer,
-      },
-      ...gameLogs,
-    ]);
-
-    setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
-  }
-
-  function handleRestart() {
-    setGameLogs([]);
-    setGameBoard(INITIAL_GAME_BOARD.map((row) => [...row]));
-    setCurrentPlayer("X");
-  }
-
-  const winner = getWinner(gameBoard, PLAYERS);
-  const isDraw = gameLogs.length === 9 && !winner;
+export default function App() {
   return (
-    <>
-      {(winner || isDraw) && <GameOver status={winner} restart={handleRestart} />}
-      <Player name="Player 1" symbol={"X"} />
-      <Player name="Player 2" symbol={"O"} />
-      <GameBoard board={gameBoard} handleClick={handleButtonClick} />
-      <ShowLog Logs={gameLogs} />
-    </>
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-300">
+      <header className="sticky top-0 z-10 w-full border-b bg-background/80 backdrop-blur-md">
+        <div className="container mx-auto max-w-5xl px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+              T
+            </div>
+            <h1 className="text-xl font-semibold tracking-tight">Tic Tac Toe</h1>
+          </div>
+          <ThemeToggle />
+        </div>
+      </header>
+
+      <main className="flex-1 container mx-auto max-w-5xl px-4 py-8 md:py-12 animate-fade">
+        <GameEngine />
+      </main>
+    </div>
   );
 }
-
-export default App;
