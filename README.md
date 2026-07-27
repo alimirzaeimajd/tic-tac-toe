@@ -1,1 +1,1 @@
-# I didn't use any AI for this project. for learning purposes.
+**Project Note**: The **main** branch was built entirely by me. AI was used only to help diagnose and fix specific issues during development; the implementation, architecture, and code were written by me. The **v2** and **v3** branches are AI-generated versions created to extend the repository with different implementations, explore alternative ideas, and showcase more feature-rich versions of the project alongside the original.
