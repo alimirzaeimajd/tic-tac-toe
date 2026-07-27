@@ -4,7 +4,29 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>tic-tac-toe</title>
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0b" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="description"
+      content="A premium, accessible Tic-Tac-Toe game with score tracking, move history, undo, and light/dark themes."
+    />
+    <title>Tic-Tac-Toe</title>
+    <script>
+      // Applied before paint so the correct theme renders on first frame
+      // (avoids a flash of the wrong theme). Kept in sync with useTheme.js.
+      (function () {
+        try {
+          var stored = localStorage.getItem("ttt:theme");
+          var systemPrefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches;
+          var isDark = stored === "dark" || (stored !== "light" && systemPrefersDark);
+          document.documentElement.classList.toggle("dark", isDark);
+        } catch (error) {
+          // localStorage may be unavailable (e.g. private browsing); default to light.
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

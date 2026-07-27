@@ -1,79 +1,115 @@
-import "./App.css";
-import Player from "./Components/Player";
-import GameBoard from "./Components/GameBoard";
-import { useState } from "react";
-import ShowLog from "./Components/showLog";
-import GameOver from "./Components/GameOver";
-import { WINNING_COMBINATIONS as winSituation } from "./winning-combinations";
+import Header from "./components/layout/Header";
+import Board from "./components/game/Board";
+import StatusBar from "./components/game/StatusBar";
+import PlayerCard from "./components/game/PlayerCard";
+import Controls from "./components/game/Controls";
+import MoveHistory from "./components/game/MoveHistory";
+import { useTheme } from "./hooks/useTheme";
+import { useSound } from "./hooks/useSound";
+import { useTicTacToe } from "./hooks/useTicTacToe";
 
-const PLAYERS = {
-  X: "Player 1",
-  O: "Player 2",
-};
+export default function App() {
+  const { preference: themePreference, cyclePreference: cycleTheme } = useTheme();
+  const sound = useSound();
 
-const INITIAL_GAME_BOARD = [
-  [null, null, null],
-  [null, null, null],
-  [null, null, null],
-];
+  const {
+    board,
+    moves,
+    lastMove,
+    players,
+    scores,
+    currentSymbol,
+    winnerInfo,
+    isDraw,
+    isGameOver,
+    canUndo,
+    playMove,
+    undoLastMove,
+    restartRound,
+    resetMatch,
+    updatePlayerName,
+  } = useTicTacToe({
+    onMove: sound.playMove,
+    onWin: sound.playWin,
+    onDraw: sound.playDraw,
+    onUndo: sound.playUndo,
+  });
 
-function getWinner(b, p) {
-  let winner;
-
-  for (const c of winSituation) {
-    const first = b[c[0].row][c[0].column];
-    const second = b[c[1].row][c[1].column];
-    const third = b[c[2].row][c[2].column];
-
-    if (first && first === second && second === third) {
-      winner = p[first];
-    }
-  }
-
-  return winner;
-}
-
-function App() {
-  const [gameLogs, setGameLogs] = useState([]);
-
-  const [gameBoard, setGameBoard] = useState(INITIAL_GAME_BOARD);
-
-  const [currentPlayer, setCurrentPlayer] = useState("X");
-
-  function handleButtonClick(row, col) {
-    if (gameBoard[row][col]) return; // square already filled
-    const next = gameBoard.map((row) => [...row]); // don't mutate state directly
-    next[row][col] = currentPlayer;
-    setGameBoard(next);
-
-    setGameLogs([
-      {
-        squareInfo: { row, col },
-        player: currentPlayer,
-      },
-      ...gameLogs,
-    ]);
-
-    setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
-  }
-
-  function handleRestart() {
-    setGameLogs([]);
-    setGameBoard(INITIAL_GAME_BOARD.map((row) => [...row]));
-    setCurrentPlayer("X");
-  }
-
-  const winner = getWinner(gameBoard, PLAYERS);
-  const isDraw = gameLogs.length === 9 && !winner;
   return (
-    <>
-      {(winner || isDraw) && <GameOver status={winner} restart={handleRestart} />}
-      <Player name="Player 1" symbol={"X"} />
-      <Player name="Player 2" symbol={"O"} />
-      <GameBoard board={gameBoard} handleClick={handleButtonClick} />
-      <ShowLog Logs={gameLogs} />
-    </>
+    <div className="flex min-h-svh flex-col bg-background">
+      <div className="mx-auto w-full max-w-5xl px-4 pt-6 sm:px-6">
+        <Header
+          themePreference={themePreference}
+          onCycleTheme={cycleTheme}
+          soundEnabled={sound.enabled}
+          onToggleSound={sound.toggleEnabled}
+        />
+      </div>
+
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6 lg:flex-row lg:items-start lg:gap-8 lg:py-10">
+        <div className="mx-auto flex w-full max-w-md flex-col gap-4">
+          <div className="grid grid-cols-2 gap-3">
+            <PlayerCard
+              symbol="X"
+              name={players.X.name}
+              score={scores.X}
+              isActive={!isGameOver && currentSymbol === "X"}
+              isWinner={isGameOver && winnerInfo?.symbol === "X"}
+              onNameChange={updatePlayerName}
+            />
+            <PlayerCard
+              symbol="O"
+              name={players.O.name}
+              score={scores.O}
+              isActive={!isGameOver && currentSymbol === "O"}
+              isWinner={isGameOver && winnerInfo?.symbol === "O"}
+              onNameChange={updatePlayerName}
+            />
+          </div>
+
+          <StatusBar
+            currentSymbol={currentSymbol}
+            currentPlayerName={players[currentSymbol].name}
+            winnerInfo={winnerInfo}
+            winnerName={winnerInfo ? players[winnerInfo.symbol].name : null}
+            isDraw={isDraw}
+          />
+
+          <Board
+            board={board}
+            lastMove={lastMove}
+            winnerInfo={winnerInfo}
+            isGameOver={isGameOver}
+            onPlay={playMove}
+          />
+
+          <div className="flex items-center justify-center gap-3 font-mono text-xs text-muted-foreground">
+            <span>
+              Draws: <span className="text-foreground">{scores.draws}</span>
+            </span>
+            <span aria-hidden="true">·</span>
+            <span>
+              Moves: <span className="text-foreground">{moves.length}</span>/9
+            </span>
+          </div>
+
+          <Controls
+            canUndo={canUndo}
+            isGameOver={isGameOver}
+            onUndo={undoLastMove}
+            onRestartRound={restartRound}
+            onResetMatch={resetMatch}
+          />
+        </div>
+
+        <div className="w-full lg:w-80 lg:shrink-0">
+          <MoveHistory moves={moves} players={players} />
+        </div>
+      </main>
+
+      <footer className="mx-auto w-full max-w-5xl px-4 pb-8 pt-2 text-center text-xs text-muted-foreground sm:px-6">
+        Built with React, Vite &amp; Tailwind CSS.
+      </footer>
+    </div>
   );
 }
-
-export default App;
